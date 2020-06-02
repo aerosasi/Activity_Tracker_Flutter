@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "779905222217",
+    "firebase_url": "https://activity-tracker-f03ca.firebaseio.com",
+    "project_id": "activity-tracker-f03ca",
+    "storage_bucket": "activity-tracker-f03ca.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:779905222217:android:11a7e536ce596bc0836198",
+        "android_client_info": {
+          "package_name": "com.aerosasi.timetracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "779905222217-7s1pdjjcditp67voaf5ob755phnulo2k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.aerosasi.timetracker",
+            "certificate_hash": "e33beb9e646980f52c13c7ffba92b95b8f53fbf4"
+          }
+        },
+        {
+          "client_id": "779905222217-4u1a1d85kakj9surgr0r48k9alp2t4ht.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDFqvqIXfvyP-uFjNsLGNkXgf5qpMVoE9A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "779905222217-4u1a1d85kakj9surgr0r48k9alp2t4ht.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

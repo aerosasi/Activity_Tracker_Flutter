@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Activity Tracker</string>
+    <string name="facebook_app_id">544574516210177</string>
+    <string name="fb_login_protocol_scheme">fb544574516210177</string>
+
+</resources>
