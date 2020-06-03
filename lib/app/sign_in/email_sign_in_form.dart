@@ -1,17 +1,19 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:timetracker/services/auth.dart';
 import 'package:timetracker/widgets/form_submit_button.dart';
 import 'package:timetracker/app/sign_in/validators.dart';
+import 'package:provider/provider.dart';
+import 'package:timetracker/services/auth.dart';
+import 'package:flutter/services.dart';
+
+import 'package:timetracker/widgets/platform_alert_dialog.dart';
+import 'package:timetracker/widgets/platform_exception_alert_dialog.dart';
 
 enum EmailSignInFormType { signIn, register }
-
 
 //stateful widget is used as we need to change some values of the variables
 
 class EmailSignInForm extends StatefulWidget with EmailAndPasswordValidators {
-  EmailSignInForm({@required this.auth});
-
-  final AuthBase auth;
 
   @override
   _EmailSignInFormState createState() => _EmailSignInFormState();
@@ -26,6 +28,7 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
 
   // to get email and password
   String get _email => _emailController.text;
+
   String get _password => _passwordController.text;
 
   //To display error text only after submitting the form
@@ -34,23 +37,42 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
   bool _isLoading = false;
 
 
+  //The dispose method is called each time a widget is disposed or poped in navigator
+  // it removes the items which no longer needed when widget is removed
+  //it is important to dispose the controllers , focus node
+  @override
+  void dispose(){
+    _emailController.dispose();
+    _passwordController.dispose();
+    _emailFocusNode.dispose();
+    _passwordFocusNode.dispose();
+      super.dispose();
+  }
+
+
   void _submit() async {
     setState(() {
-      _submitted=true;
-      _isLoading=true;
+      _submitted = true;
+      _isLoading = true;
     });
     try {
+
+
+      final auth = Provider.of<AuthBase>(context,listen : false);
       if (_formType == EmailSignInFormType.signIn) {
-        await widget.auth.signInWithEmailAndPassword(_email, _password);
+        await auth.signInWithEmailAndPassword(_email, _password);
       } else {
-        await widget.auth.createUserWithEmailAndPassword(_email, _password);
+        await auth.createUserWithEmailAndPassword(_email, _password);
       }
       Navigator.of(context).pop();
-    } catch (e) {
-      print(e);
-    }finally{
+    } on PlatformException catch (e) {
+      PlatformExceptionAlertDialog(
+       title: 'Sign in Failed',
+       exception:e,
+      ).show(context);
+    } finally {
       setState(() {
-        _isLoading=false;
+        _isLoading = false;
       });
     }
   }
@@ -60,14 +82,15 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
       _formType = _formType == EmailSignInFormType.signIn
           ? EmailSignInFormType.register
           : EmailSignInFormType.signIn;
-      _submitted=false;
+      _submitted = false;
     });
   }
 
   //To change the focus when next button in keyboard while on username is clicked
   void _emailEditingComplete() {
-    final newFocus = widget.emailValidator.isValid(_email) ?
-    _passwordFocusNode : _emailFocusNode;
+    final newFocus = widget.emailValidator.isValid(_email)
+        ? _passwordFocusNode
+        : _emailFocusNode;
     FocusScope.of(context).requestFocus(newFocus);
   }
 
@@ -81,7 +104,8 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
 
     // this is to not to enable submit button is email and password is empty and also when we are not in the loading state
     bool submitEnabled = widget.emailValidator.isValid(_email) &&
-        widget.passwordValidator.isValid(_password) && !_isLoading;
+        widget.passwordValidator.isValid(_password) &&
+        !_isLoading;
 
     return [
       _buildEmailTextField(),
@@ -116,7 +140,7 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
           labelText: 'Email',
           hintText: 'test@test.com',
           errorText: showErrorText ? widget.invalidEmailErrorText : null,
-      enabled: _isLoading == false),
+          enabled: _isLoading == false),
       autocorrect: false,
       keyboardType: TextInputType.emailAddress,
       textInputAction: TextInputAction.next,
@@ -128,8 +152,8 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
   //Password Method
 
   TextField _buildPasswordTextField() {
-
-    bool showErrorText = _submitted  &&  !widget.passwordValidator.isValid(_password);
+    bool showErrorText =
+        _submitted && !widget.passwordValidator.isValid(_password);
     return TextField(
       controller: _passwordController,
       decoration: InputDecoration(
@@ -144,7 +168,6 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
       onChanged: (_password) => _updateState(),
     );
   }
-
 
   // this is going to execute first
   @override
