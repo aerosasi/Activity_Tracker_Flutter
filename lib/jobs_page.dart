@@ -2,7 +2,7 @@
 import 'package:timetracker/widgets/platform_alert_dialog.dart';
 import 'package:provider/provider.dart';
 import 'services/auth.dart';
-class HomePage extends StatelessWidget {
+class JobsPage extends StatelessWidget {
 
 
   Future<void> _signOut(BuildContext context) async {

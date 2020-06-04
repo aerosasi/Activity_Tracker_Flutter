@@ -8,7 +8,7 @@ class PlatformExceptionAlertDialog extends PlatformAlertDialog {
     @required PlatformException exception,
   }) :super(
     title:title,
-    content :exception.message,
+    content :_message(exception),
     defaultActionText:'OK',
   );
 

@@ -6,20 +6,20 @@ import 'package:provider/provider.dart';
 import 'package:timetracker/services/auth.dart';
 import 'package:flutter/services.dart';
 
-import 'package:timetracker/widgets/platform_alert_dialog.dart';
 import 'package:timetracker/widgets/platform_exception_alert_dialog.dart';
 
-enum EmailSignInFormType { signIn, register }
+import 'email_sign_in_model.dart';
+
 
 //stateful widget is used as we need to change some values of the variables
 
-class EmailSignInForm extends StatefulWidget with EmailAndPasswordValidators {
+class EmailSignInFormStateful extends StatefulWidget with EmailAndPasswordValidators {
 
   @override
-  _EmailSignInFormState createState() => _EmailSignInFormState();
+  _EmailSignInFormStatefulState createState() => _EmailSignInFormStatefulState();
 }
 
-class _EmailSignInFormState extends State<EmailSignInForm> {
+class _EmailSignInFormStatefulState extends State<EmailSignInFormStateful> {
   EmailSignInFormType _formType = EmailSignInFormType.signIn;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -50,7 +50,7 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
   }
 
 
-  void _submit() async {
+  Future<void> _submit() async {
     setState(() {
       _submitted = true;
       _isLoading = true;

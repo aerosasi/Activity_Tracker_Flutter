@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:timetracker/app/sign_in/sign_in_manager.dart';
 import 'package:timetracker/app/sign_in/sign_in_button.dart';
 import 'package:timetracker/app/sign_in/social_sign_in_button.dart';
 import 'package:timetracker/services/auth.dart';
@@ -8,13 +9,33 @@ import 'email_sign_in_page.dart';
 import 'package:flutter/services.dart';
 import 'package:timetracker/widgets/platform_exception_alert_dialog.dart';
 
-class SignInPage extends StatefulWidget {
-  @override
-  _SignInPageState createState() => _SignInPageState();
-}
+class SignInPage extends StatelessWidget {
+  const SignInPage({
+    Key key,
+    @required this.manager,
+    @required this.isLoading,
+  }) : super(key: key);
 
-class _SignInPageState extends State<SignInPage> {
-  bool _isLoading = false;
+  final SignInManager manager;
+  final bool isLoading;
+
+  static Widget create(BuildContext context) {
+    final auth = Provider.of<AuthBase>(context,listen: false);
+    return ChangeNotifierProvider<ValueNotifier<bool>>(
+      create: (_) => ValueNotifier<bool>(false),
+      child: Consumer<ValueNotifier<bool>>(
+        builder: (_,isLoading,__) => Provider<SignInManager>(
+          create: (_) => SignInManager(auth: auth,isLoading: isLoading ),
+          child: Consumer<SignInManager>(
+            builder: (context, manager, _ ) => SignInPage(
+              manager: manager,
+              isLoading: isLoading.value,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
   void _showSignInError(BuildContext context, PlatformException exception) {
     PlatformExceptionAlertDialog(
@@ -25,32 +46,25 @@ class _SignInPageState extends State<SignInPage> {
 
   Future<void> _signInWithGoogle(BuildContext context) async {
     try {
-      setState(() => _isLoading = true);
-      final auth = Provider.of<AuthBase>(context, listen: false);
-      await auth.signInWithGoogle();
+      await manager.signInWithGoogle();
     } on PlatformException catch (e) {
       if (e.code != 'ERROR_ABORTED_BY_USER') {
         _showSignInError(context, e);
       }
-    } finally {
-      setState(() => _isLoading = false);
     }
   }
 
   Future<void> _signInWithFacebook(BuildContext context) async {
     try {
-      setState(() => _isLoading = true);
-      final auth = Provider.of<AuthBase>(context, listen: false);
-      await auth.signInWithFacebook();
+      await manager.signInWithFacebook();
     } on PlatformException catch (e) {
       if (e.code != 'ERROR_ABORTED_BY_USER') {
         _showSignInError(context, e);
       }
-    } finally {
-      setState(() => _isLoading = false);
     }
   }
 
+  //email sign in
   void _signInWithEmail(BuildContext context) {
     //to show the email sign in page
     Navigator.of(context).push(MaterialPageRoute<void>(
@@ -59,17 +73,15 @@ class _SignInPageState extends State<SignInPage> {
     ));
   }
 
+  // anonymous sign in
+
   Future<void> _signInAnonymously(BuildContext context) async {
     try {
-      setState(() => _isLoading = true);
-      final auth = Provider.of<AuthBase>(context, listen: false);
-      await auth.signInAnonymously();
+      await manager.signInAnonymously();
     } on PlatformException catch (e) {
       if (e.code != 'ERROR_ABORTED_BY_USER') {
         _showSignInError(context, e);
       }
-    } finally {
-      setState(() => _isLoading = false);
     }
   }
 
@@ -81,11 +93,12 @@ class _SignInPageState extends State<SignInPage> {
         centerTitle: true,
         elevation: 25.0,
       ),
-      body: _buildContent(context),
+      body:_buildContent(context),
       backgroundColor: Colors.grey[200],
     );
   }
 
+  // it builds the google facebook , email and sign anonymously buttons
   Widget _buildContent(BuildContext context) {
     return Padding(
       padding: EdgeInsets.all(20.0),
@@ -93,9 +106,7 @@ class _SignInPageState extends State<SignInPage> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          SizedBox(
-              height: 50.0,
-              child: _buildHeader()),
+          SizedBox(height: 50.0, child: _buildHeader()),
           SizedBox(
             height: 70.0,
           ),
@@ -104,7 +115,7 @@ class _SignInPageState extends State<SignInPage> {
             text: 'Sign in with Google',
             color: Colors.white,
             textColor: Colors.black87,
-            onPressed:_isLoading ? null : () => _signInWithGoogle(context),
+            onPressed: isLoading ? null : () => _signInWithGoogle(context),
           ),
           SizedBox(
             height: 15.0,
@@ -114,7 +125,7 @@ class _SignInPageState extends State<SignInPage> {
             text: 'Sign in with Facebook',
             color: Color(0xFF334D92),
             textColor: Colors.white,
-            onPressed:_isLoading ? null : () => _signInWithFacebook(context),
+            onPressed: isLoading ? null : () => _signInWithFacebook(context),
           ),
           SizedBox(
             height: 15.0,
@@ -143,15 +154,16 @@ class _SignInPageState extends State<SignInPage> {
           SignInButton(
             text: 'Sign in Annonymously',
             color: Colors.yellow[300],
-            onPressed:_isLoading ? null : () => _signInAnonymously(context),
+            onPressed: isLoading ? null : () => _signInAnonymously(context),
           ),
         ],
       ),
     );
   }
 
+  // this is for making the loading button appear when one of the sign in button is clicked
   Widget _buildHeader() {
-    if (_isLoading) {
+    if (isLoading) {
       return Center(
         child: CircularProgressIndicator(),
       );
@@ -160,9 +172,7 @@ class _SignInPageState extends State<SignInPage> {
       'Sign In',
       textAlign: TextAlign.center,
       style: TextStyle(
-          fontSize: 30.0,
-          color: Colors.black,
-          fontWeight: FontWeight.bold),
+          fontSize: 30.0, color: Colors.black, fontWeight: FontWeight.bold),
     );
   }
 }
