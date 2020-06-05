@@ -19,24 +19,31 @@ class SignInPage extends StatelessWidget {
   final SignInManager manager;
   final bool isLoading;
 
+  //------functions---------
+
+  // Since this is a static method it doesnt need objects to access
+  // hence it is accessed from the Landing page first without the objects
   static Widget create(BuildContext context) {
-    final auth = Provider.of<AuthBase>(context,listen: false);
+    final auth = Provider.of<AuthBase>(context, listen: false);
     return ChangeNotifierProvider<ValueNotifier<bool>>(
       create: (_) => ValueNotifier<bool>(false),
       child: Consumer<ValueNotifier<bool>>(
-        builder: (_,isLoading,__) => Provider<SignInManager>(
-          create: (_) => SignInManager(auth: auth,isLoading: isLoading ),
-          child: Consumer<SignInManager>(
-            builder: (context, manager, _ ) => SignInPage(
-              manager: manager,
-              isLoading: isLoading.value,
+        builder: (_, isLoading, __) =>
+            Provider<SignInManager>(
+              create: (_) => SignInManager(auth: auth, isLoading: isLoading),
+              child: Consumer<SignInManager>(
+                builder: (context, manager, _) =>
+                    SignInPage(
+                      manager: manager,
+                      isLoading: isLoading.value,
+                    ),
+              ),
             ),
-          ),
-        ),
       ),
     );
   }
 
+  // to display error when signed in
   void _showSignInError(BuildContext context, PlatformException exception) {
     PlatformExceptionAlertDialog(
       title: 'Sign in Failed',
@@ -44,6 +51,7 @@ class SignInPage extends StatelessWidget {
     ).show(context);
   }
 
+  // to sign in with google
   Future<void> _signInWithGoogle(BuildContext context) async {
     try {
       await manager.signInWithGoogle();
@@ -54,6 +62,7 @@ class SignInPage extends StatelessWidget {
     }
   }
 
+  // to sign in with Facebook
   Future<void> _signInWithFacebook(BuildContext context) async {
     try {
       await manager.signInWithFacebook();
@@ -64,7 +73,8 @@ class SignInPage extends StatelessWidget {
     }
   }
 
-  //email sign in
+  //email sign in with email
+  // it will call to EmailSignInPage
   void _signInWithEmail(BuildContext context) {
     //to show the email sign in page
     Navigator.of(context).push(MaterialPageRoute<void>(
@@ -74,7 +84,6 @@ class SignInPage extends StatelessWidget {
   }
 
   // anonymous sign in
-
   Future<void> _signInAnonymously(BuildContext context) async {
     try {
       await manager.signInAnonymously();
@@ -85,6 +94,8 @@ class SignInPage extends StatelessWidget {
     }
   }
 
+  // ----UI---------
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -93,7 +104,7 @@ class SignInPage extends StatelessWidget {
         centerTitle: true,
         elevation: 25.0,
       ),
-      body:_buildContent(context),
+      body: _buildContent(context),
       backgroundColor: Colors.grey[200],
     );
   }
@@ -162,6 +173,7 @@ class SignInPage extends StatelessWidget {
   }
 
   // this is for making the loading button appear when one of the sign in button is clicked
+  //it basically loads till user id is created and fetched from firebase
   Widget _buildHeader() {
     if (isLoading) {
       return Center(

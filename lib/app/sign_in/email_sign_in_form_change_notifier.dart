@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:timetracker/app/sign_in/email_sign_in_bloc.dart';
 import 'package:timetracker/app/sign_in/email_sign_in_change_model.dart';
 import 'package:timetracker/widgets/form_submit_button.dart';
 import 'package:provider/provider.dart';
@@ -8,8 +7,6 @@ import 'package:timetracker/services/auth.dart';
 import 'package:flutter/services.dart';
 
 import 'package:timetracker/widgets/platform_exception_alert_dialog.dart';
-
-import 'email_sign_in_model.dart';
 
 //stateful widget is used as we need to change some values of the variables
 
