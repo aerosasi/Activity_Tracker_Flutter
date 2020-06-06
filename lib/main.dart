@@ -4,7 +4,7 @@ import 'app/landing_page.dart';
 import 'package:timetracker/services/auth.dart';
 import 'package:provider/provider.dart';
 
-void main(){
+void main() {
   runApp(MyApp());
 }
 
@@ -12,14 +12,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Provider<AuthBase>(
-    create : (context) => Auth(),
+      create: (context) => Auth(),
       child: MaterialApp(
-        title: 'Activity Tracker',
+          debugShowCheckedModeBanner: false,
+          title: 'Activity Tracker',
           theme: ThemeData(
-          primarySwatch: Colors.indigo,
+            primarySwatch: Colors.indigo,
           ),
-          home: LandingPage(
-          )),
+          home: LandingPage()),
     );
   }
 }

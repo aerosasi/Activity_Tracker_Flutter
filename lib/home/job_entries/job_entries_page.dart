@@ -15,14 +15,14 @@ import 'package:timetracker/home/job_entries/entry_page.dart';
 import 'package:timetracker/widgets/platform_exception_alert_dialog.dart';
 import 'package:timetracker/services/database.dart';
 
-
 class JobEntriesPage extends StatelessWidget {
   const JobEntriesPage({@required this.database, @required this.job});
+
   final Database database;
   final Job job;
 
   static Future<void> show(BuildContext context, Job job) async {
-    final Database database = Provider.of<Database>(context,listen: false);
+    final Database database = Provider.of<Database>(context, listen: false);
     await Navigator.of(context).push(
       MaterialPageRoute(
         fullscreenDialog: false,
@@ -45,33 +45,33 @@ class JobEntriesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<Job>(
-      stream: database.jobStream(jobId: job.id),
-      builder: (context, snapshot) {
-        final job = snapshot.data;
-        final jobName= job ?.name ?? '';
-        return Scaffold(
-          appBar: AppBar(
-            elevation: 2.0,
-            title: Text(jobName),
-            actions: <Widget>[
-              FlatButton(
-                child: Text(
-                  'Edit',
-                  style: TextStyle(fontSize: 18.0, color: Colors.white),
+        stream: database.jobStream(jobId: job.id),
+        builder: (context, snapshot) {
+          final job = snapshot.data;
+          final jobName = job?.name ?? '';
+          return Scaffold(
+            appBar: AppBar(
+              elevation: 2.0,
+              title: Text(jobName),
+              actions: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.edit),
+                  onPressed: () =>
+                      EditJobPage.show(context, job: job, database: database),
                 ),
-                onPressed: () => EditJobPage.show(context, job: job,database: database),
-              ),
-            ],
-          ),
-          body: _buildContent(context, job),
-          floatingActionButton: FloatingActionButton(
-            child: Icon(Icons.add),
-            onPressed: () =>
-                EntryPage.show(context: context, database: database, job: job),
-          ),
-        );
-      }
-    );
+                IconButton(
+                  icon: Icon(Icons.add),
+                  color: Colors.white,
+                  onPressed: () => EntryPage.show(
+                      context: context, database: database, job: job),
+                ),
+
+              ],
+            ),
+            body: _buildContent(context, job),
+
+          );
+        });
   }
 
   Widget _buildContent(BuildContext context, Job job) {

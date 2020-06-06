@@ -31,6 +31,7 @@ class EmailSignInFormChangeNotifier extends StatefulWidget {
       _EmailSignInFormChangeNotifierState();
 }
 
+
 class _EmailSignInFormChangeNotifierState
     extends State<EmailSignInFormChangeNotifier> {
   //EmailSignInFormType _formType = EmailSignInFormType.signIn;
@@ -139,7 +140,11 @@ class _EmailSignInFormChangeNotifierState
     );
   }
 
+
+  // ------------------------ UI--------------
   // this is going to execute first
+
+
   @override
   Widget build(BuildContext context) {
       return Padding(

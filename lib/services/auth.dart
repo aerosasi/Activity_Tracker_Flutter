@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -22,9 +23,14 @@ abstract class AuthBase {
 }
 
 class User {
-  User({this.uid});
+  User(
+      {@required this.uid,
+      @required this.photoUrl,
+      @required this.displayName});
 
   final String uid;
+  final String photoUrl;
+  final String displayName;
 }
 
 class Auth implements AuthBase {
@@ -35,7 +41,11 @@ class Auth implements AuthBase {
     if (user == null) {
       return null;
     }
-    return User(uid: user.uid);
+    return User(
+      uid: user.uid,
+      displayName: user.displayName,
+      photoUrl: user.photoUrl,
+    );
   }
 
   //This is to stream data b/w landing - sign in - home page
@@ -44,6 +54,7 @@ class Auth implements AuthBase {
     return _firebaseAuth.onAuthStateChanged.map(_userFromFirebase);
   }
 
+  //This is to get current user active from firebase
   Future<User> currentUser() async {
     final user = await _firebaseAuth.currentUser();
     return _userFromFirebase(user);

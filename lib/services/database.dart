@@ -40,6 +40,7 @@ class FirestoreDatabase implements Database {
   Future<void> deleteJob(Job job) async {
     // delete where entry.jobId == job.jobId
     final allEntries = await entriesStream(job: job).first;
+    //since each jobs has lots of entries those entries also needs to be deleted
     for (Entry entry in allEntries) {
       if (entry.jobId == job.id) {
         await deleteEntry(entry);
